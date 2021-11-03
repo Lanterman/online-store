@@ -1,4 +1,5 @@
 import django_filters
+from django.db.models import Count
 from rest_framework import viewsets, mixins, filters, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -23,7 +24,7 @@ class ProductViewSets(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return ProductsSerializer
+            return ProductListSerializer
         if self.action == 'retrieve':
             return ProductDetailSerializer
         if self.action == 'add_comment':
@@ -60,3 +61,40 @@ class ProductViewSets(viewsets.ModelViewSet):
             return Response(data={'status': 'Комментарий добавлен', 'info': serializer.data},
                             status=status.HTTP_201_CREATED)
         return Response(data='Error', status=status.HTTP_404_NOT_FOUND)
+
+
+class CategoryViewSets(viewsets.ModelViewSet):
+    """Категории"""
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['number_of_products']
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        queryset = Category.objects.all().annotate(number_of_products=Count('product_set'))
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return CategoryListSerializer
+        if self.action == 'retrieve':
+            return CategoryDetailSerializer
+        if self.action in ('create', 'update', 'partial_update'):
+            return CategoryCreateUpdateSerializer
+
+    def get_permissions(self):
+        if self.action in ('update', 'partial_update', 'create', 'destroy'):
+            permission_classes = [permissions.IsAdminUser]
+        else:
+            permission_classes = []
+        return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        category = serializer.save()
+        category.slug = category.name
+        category.save()
+
+    def perform_update(self, serializer):
+        category = serializer.save()
+        category.slug = category.name
+        category.save()

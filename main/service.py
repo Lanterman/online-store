@@ -1,6 +1,6 @@
 import django_filters
 
-from main.models import Product
+from main.models import Product, Category
 
 
 class ProductFilter(django_filters.FilterSet):
@@ -8,4 +8,4 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = ['price', 'category']
+        fields = ['price', 'category', 'stock_in']

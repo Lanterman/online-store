@@ -35,11 +35,11 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    fields = ('description', 'user', 'product')
-    list_display = ('id', 'user', 'product', 'date')
+    fields = ('description', 'user', 'product', 'parent')
+    list_display = ('id', 'user', 'product', 'parent', 'date')
     list_display_links = ('id', 'user')
     list_filter = ('user', 'product', 'date')
-    list_select_related = ('user', 'product')
+    list_select_related = ('user', 'product', 'parent')
 
 
 @admin.register(Basket)

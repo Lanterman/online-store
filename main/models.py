@@ -24,11 +24,13 @@ class Product(AbstractModel):
                                  related_name='product_set')
     price = models.PositiveIntegerField('Цена', default=0)
     stock_in = models.BooleanField('В наличии', default=False)
+    photo = models.ImageField('Фото', blank=True, upload_to='products/')
     description = models.TextField('Описание', default='Нет описания!')
 
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
+        ordering = ['-id']
 
 
 class Comment(models.Model):

@@ -88,6 +88,7 @@ class CategoryViewSets(viewsets.ModelViewSet):
     search_fields = ['name']
     ordering_fields = ['number_of_products']
     lookup_field = 'slug'
+    pagination_class = None
 
     def get_queryset(self):
         queryset = Category.objects.all().annotate(number_of_products=Count('product_set'))

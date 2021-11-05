@@ -10,6 +10,7 @@ class AbstractModel(models.Model):
         abstract = True
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+        ordering = ['-id']
 
     def __str__(self):
         return f'{self.name}'

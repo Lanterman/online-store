@@ -4,6 +4,7 @@ from main.models import *
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
+    """Описание категории в продуктах"""
     url = serializers.HyperlinkedIdentityField(view_name='category-detail', lookup_field='slug')
 
     class Meta:
@@ -11,7 +12,8 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         fields = ('url', 'name')
 
 
-class ProductCommentSerializer(serializers.HyperlinkedModelSerializer):
+class ProductBasketSerializer(serializers.HyperlinkedModelSerializer):
+    """Описание продуктов в корзине"""
     url = serializers.HyperlinkedIdentityField(view_name='product-detail', lookup_field='slug')
 
     class Meta:
@@ -20,6 +22,7 @@ class ProductCommentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CatProductSerializer(serializers.ModelSerializer):
+    """Детальная информация продуктов в категории"""
     url = serializers.HyperlinkedIdentityField(view_name='product-detail', lookup_field='slug')
 
     class Meta:
@@ -28,12 +31,13 @@ class CatProductSerializer(serializers.ModelSerializer):
 
 
 class CommentChildrenSerializer(serializers.ModelSerializer):
-    """Дочерние комментарии"""
+    """Дочерние отзывы"""
+    url = serializers.HyperlinkedIdentityField(view_name='comment-detail', lookup_field='pk')
     # user = UserSerializer()
 
     class Meta:
         model = Comment
-        fields = ('description', 'user', 'date')
+        fields = ('url', 'description', 'user', 'date')
 
 
 class FilterCommentSerializer(serializers.ListSerializer):
@@ -45,14 +49,14 @@ class FilterCommentSerializer(serializers.ListSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     """Отзыв(-ы)"""
-    # url = serializers.HyperlinkedIdentityField(view_name='comment-detail')
+    url = serializers.HyperlinkedIdentityField(view_name='comment-detail', lookup_field='pk')
     # user = UserSerializer()
     children = CommentChildrenSerializer(many=True)
 
     class Meta:
         list_serializer_class = FilterCommentSerializer
         model = Comment
-        fields = ('description', 'user', 'children', 'date')
+        fields = ('url', 'description', 'user', 'children', 'date')
 
 
 # main
@@ -116,3 +120,24 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('description',)
+
+
+class CommentDetailSerializer(serializers.ModelSerializer):
+    """Детальный отзыв"""
+    # user = UserSerializer()
+    children = CommentChildrenSerializer(many=True)
+
+    class Meta:
+        list_serializer_class = FilterCommentSerializer
+        model = Comment
+        fields = ('description', 'user', 'children', 'date')
+
+
+class BasketSerializer(serializers.ModelSerializer):
+    """Корзина пользователя"""
+    # user = UserSerializer()
+    product = ProductBasketSerializer(many=True)
+
+    class Meta:
+        model = Basket
+        fields = ('user', 'product')

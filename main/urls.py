@@ -6,6 +6,8 @@ from main.views import *
 router = DefaultRouter()
 router.register(r'product', ProductViewSets)
 router.register(r'category', CategoryViewSets, basename='category')
+router.register(r'comment', CommentRetrieveViewSets)
+router.register(r'basket', BasketViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

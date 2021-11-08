@@ -41,8 +41,8 @@ class ProductListSerializerTestCase(TestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]['stock_in'], False)
         self.assertEqual(data[1]['stock_in'], True)
-        self.assertEqual(data[0]['category']['url'], '/category/test/')
-        self.assertEqual(data[1]['category']['url'], '/category/test/')
+        self.assertEqual(data[0]['category']['url'], '/shop/category/test/')
+        self.assertEqual(data[1]['category']['url'], '/shop/category/test/')
 
 
 class ProductCreateUpdateSerializerTestCase(TestCase):
@@ -52,7 +52,7 @@ class ProductCreateUpdateSerializerTestCase(TestCase):
         data = ProductCreateUpdateSerializer(product_1).data
         url = reverse('product-list')
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(len(data), 6)
         self.assertEqual(data['stock_in'], False)
 
@@ -70,8 +70,8 @@ class CategoryListSerializerTestCase(TestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]['number_of_products'], 0)
         self.assertEqual(data[1]['number_of_products'], 1)
-        self.assertEqual(data[0]['url'], '/category/test_2/')
-        self.assertEqual(data[1]['url'], '/category/test_1/')
+        self.assertEqual(data[0]['url'], '/shop/category/test_2/')
+        self.assertEqual(data[1]['url'], '/shop/category/test_1/')
 
 
 class CategoryDetailSerializerTestCase(TestCase):
@@ -93,7 +93,7 @@ class CategoryDetailSerializerTestCase(TestCase):
         self.assertEqual(len(data_2), 4)
         self.assertEqual(data_2['number_of_products'], 0)
         self.assertEqual(len(data_1['product_set']) == 1, len(data_2['product_set']) == 0)
-        self.assertEqual(data_1['product_set'][0]['url'], '/product/product_1/')
+        self.assertEqual(data_1['product_set'][0]['url'], '/shop/product/product_1/')
 
 
 class CategoryCreateUpdateSerializerTestCase(TestCase):
@@ -102,7 +102,7 @@ class CategoryCreateUpdateSerializerTestCase(TestCase):
         data = CategoryCreateUpdateSerializer(category).data
         url = reverse('category-list')
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(len(data), 1)
         self.assertEqual(data['name'], 'test')
 
@@ -134,4 +134,4 @@ class CommentDetailSerializerTestCase(TestCase):
         self.assertEqual(data_1['description'], 'yes')
         self.assertEqual(data_2['description'], 'no')
         self.assertEqual(len(data_1['children']) == 1, len(data_2['children']) == 0)
-        self.assertEqual(data_1['children'][0]['url'], '/comment/4/')
+        self.assertEqual(data_1['children'][0]['url'], '/shop/comment/4/')

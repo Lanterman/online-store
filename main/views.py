@@ -1,5 +1,6 @@
 import django_filters
 from django.db.models import Count
+from django.shortcuts import render
 from rest_framework import viewsets, mixins, filters, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -17,7 +18,7 @@ class ProductViewSets(viewsets.ModelViewSet):
     Добавление комментария.
     Добавление/удаление продукта в/из корзину.
     """
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().select_related('category')
     filter_backends = [filters.SearchFilter, django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = ProductFilter
     search_fields = ['name']
@@ -161,3 +162,8 @@ class BasketViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         basket = Basket.objects.get_or_create(user=self.request.user.username)[0]
         serializer = self.get_serializer(basket)
         return Response(data=serializer.data)
+
+
+def auth(request):
+    """Авторизация через другие соц сети"""
+    return render(request, 'auth.html')

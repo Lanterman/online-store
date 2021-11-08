@@ -33,7 +33,7 @@ class CatProductSerializer(serializers.ModelSerializer):
 class CommentChildrenSerializer(serializers.ModelSerializer):
     """Дочерние отзывы"""
     url = serializers.HyperlinkedIdentityField(view_name='comment-detail', lookup_field='pk')
-    # user = UserSerializer()
+    # user = serializers.SlugField(source='user.username')
 
     class Meta:
         model = Comment
@@ -50,7 +50,7 @@ class FilterCommentSerializer(serializers.ListSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     """Отзыв(-ы)"""
     url = serializers.HyperlinkedIdentityField(view_name='comment-detail', lookup_field='pk')
-    # user = UserSerializer()
+    # user = serializers.SlugRelatedField(slug_field='username', read_only=True)
     children = CommentChildrenSerializer(many=True)
 
     class Meta:
@@ -124,7 +124,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
 class CommentDetailSerializer(serializers.ModelSerializer):
     """Детальный отзыв"""
-    # user = UserSerializer()
+    # user = serializers.SlugField(source='user.username')
     children = CommentChildrenSerializer(many=True)
 
     class Meta:
@@ -135,7 +135,7 @@ class CommentDetailSerializer(serializers.ModelSerializer):
 
 class BasketSerializer(serializers.ModelSerializer):
     """Корзина пользователя"""
-    # user = UserSerializer()
+    # user = serializers.SlugField(source='user.username')
     product = ProductBasketSerializer(many=True)
 
     class Meta:

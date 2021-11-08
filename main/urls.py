@@ -11,4 +11,5 @@ router.register(r'basket', BasketViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('auth_html/', auth),
 ]

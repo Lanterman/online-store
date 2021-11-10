@@ -109,4 +109,3 @@ class CommentDetailSerializerTestCase(TestCase):
         self.assertEqual(data_1['description'], 'yes')
         self.assertEqual(data_2['description'], 'no')
         self.assertEqual(len(data_1['children']) == 1, len(data_2['children']) == 0)
-        self.assertEqual(data_1['children'][0]['url'], '/shop/comment/4/')

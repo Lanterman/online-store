@@ -39,7 +39,7 @@ class Comment(models.Model):
                              related_name='comment_set')
     product = models.ForeignKey(Product, verbose_name='Продукт', on_delete=models.CASCADE, related_name='comments_set')
     parent = models.ForeignKey('self', on_delete=models.CASCADE, verbose_name='Родительский комментарий',
-                               related_name='children', null=True)
+                               related_name='children', null=True, blank=True)
     description = models.TextField('Комментарий')
     date = models.DateTimeField('Время создание', auto_now_add=True)
 

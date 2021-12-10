@@ -1,31 +1,31 @@
-# Версия Docker API
-version: '3.7'
+version: "3.9"
 
 services:
   postgres_db:
-    image: postgres:13
+    image: postgres:14
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: karmavdele
-      POSTGRES_USER: postgres
-      POSTGRES_DB: Sendji_006
-    container_name: post_db
-
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    container_name: database
   online_store:
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    build: .
     command: bash -c "python manage.py makemigrations &&
-             python manage.py migrate --noinput &&
-             python manage.py runserver 0.0.0.0:8000"
+                 python manage.py migrate --noinput &&
+                 python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/app
+      - os_data:/app
     ports:
-      - 8000:8000
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     depends_on:
       - postgres_db
-    container_name: primary
-
+    container_name: main
 volumes:
   postgres_data:
+  os_data:

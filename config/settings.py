@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-5e&l9ybo8p%---*$q)t#7vkqkfp-qg9+!998h-w+=0y-khkvua
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -88,9 +88,9 @@ WSGI_APPLICATION = 'Sendji_006.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Sendji_006',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'karmavdele',
+        'PASSWORD': 'postgres',
         'HOST': 'postgres_db',
         'PORT': 5432,
     }

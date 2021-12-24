@@ -5,10 +5,10 @@ from rest_framework import viewsets, mixins, filters, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from main.models import *
-from main.permissions import AddIfNotParent, IfBasketUser
-from main.serializers import *
-from main.service import ProductFilter
+from scr.main.models import *
+from .permissions import AddIfNotParent, IfBasketUser
+from .serializers import *
+from .service import ProductFilter
 
 
 class ProductViewSets(viewsets.ModelViewSet):

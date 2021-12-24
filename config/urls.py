@@ -15,6 +15,8 @@ urlpatterns = [
     path('auth/', include('djoser.urls.jwt')),
     url('', include('social_django.urls', namespace='social')),
     path('__debug__/', include(debug_toolbar.urls)),
+
+    path('shop/', include('scr.urls')),
 ]
 
 urlpatterns += doc_urls

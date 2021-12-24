@@ -6,8 +6,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase, APIRequestFactory,  APIClient
 
-from main.models import *
-from main.serializers import *
+from scr.main.models import *
+from scr.main.serializers import *
 
 
 class ProductViewSetsTestCase(APITestCase):

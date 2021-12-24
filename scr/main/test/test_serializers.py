@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.db.models import Count
 from django.test import TestCase
 
-from main.serializers import *
-from main.models import Category, Product, Comment
+from scr.main.serializers import *
+from scr.main.models import Category, Product, Comment
 
 
 class ProductDetailSerializerTestCase(TestCase):

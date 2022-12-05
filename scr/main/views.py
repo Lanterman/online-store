@@ -4,26 +4,32 @@ from django.shortcuts import render
 from rest_framework import viewsets, mixins, filters, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle
 
 from scr.main.models import *
 from .permissions import AddIfNotParent, IfBasketUser
 from .serializers import *
-from .service import ProductFilter
+from .service import ProductFilter, BaseModelViewSet
 
 
-class ProductViewSets(viewsets.ModelViewSet):
+class ProductViewSets(BaseModelViewSet):
     """
     Список продуктов.
     Дельная информация, добавление, изменение и удаление продукта.
     Добавление комментария.
     Добавление/удаление продукта в/из корзину.
     """
-    queryset = Product.objects.all().select_related('category')
+
     filter_backends = [filters.SearchFilter, django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = ProductFilter
-    search_fields = ['name']
+    search_fields = ['name', 'category__name']
     ordering_fields = ['name', 'price']
-    lookup_field = 'slug'
+
+    def get_queryset(self):
+        if self.action in ('list', 'retrieve'):
+            return Product.objects.all().select_related('category')
+        else:
+            return Product.objects.all()
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -44,20 +50,12 @@ class ProductViewSets(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
 
-    def perform_create(self, serializer):
-        product = serializer.save()
-        product.slug = product.name
-        product.save()
-
-    def perform_update(self, serializer):
-        product = serializer.save()
-        product.slug = product.name
-        product.save()
-
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], throttle_classes=[UserRateThrottle])
     def add_comment(self, request, *args, **kwargs):
         """Добавление комментария"""
+
         serializer = self.get_serializer(data=request.data)
+
         if serializer.is_valid():
             Comment.objects.create(**serializer.validated_data, user_id=request.user.pk,
                                    product_id=self.get_object().id)
@@ -68,6 +66,7 @@ class ProductViewSets(viewsets.ModelViewSet):
     @action(detail=True)
     def add_or_del_product_to_basket(self, request, *args, **kwargs):
         """Добавление/удаление продукта в/из корзину"""
+
         basket = Basket.objects.get_or_create(user=request.user.username)[0]
         product = self.get_object()
         bas_product = basket.product.all()
@@ -80,15 +79,15 @@ class ProductViewSets(viewsets.ModelViewSet):
             return Response(data='Товар добавлен в корзину.', status=status.HTTP_200_OK)
 
 
-class CategoryViewSets(viewsets.ModelViewSet):
+class CategoryViewSets(BaseModelViewSet):
     """
     Список категорий.
     Дельная информация, добавление, изменение и удаление категории.
     """
+
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     ordering_fields = ['number_of_products']
-    lookup_field = 'slug'
     pagination_class = None
 
     def get_queryset(self):
@@ -110,39 +109,25 @@ class CategoryViewSets(viewsets.ModelViewSet):
             permission_classes = []
         return [permission() for permission in permission_classes]
 
-    def perform_create(self, serializer):
-        category = serializer.save()
-        category.slug = category.name
-        category.save()
-
-    def perform_update(self, serializer):
-        category = serializer.save()
-        category.slug = category.name
-        category.save()
-
 
 class CommentRetrieveViewSets(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     """Детальная информация комментария, ответ на комментарий"""
+
     queryset = Comment.objects.all()
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
-            if self.get_object().parent:
-                return CommentChildrenSerializer
             return CommentDetailSerializer
         if self.action == 'add_comment':
             return CommentCreateSerializer
 
-    def get_permissions(self):
-        if self.action == 'add_comment':
-            permission_classes = [AddIfNotParent, permissions.IsAuthenticated]
-        else:
-            permission_classes = []
-        return [permission() for permission in permission_classes]
-
-    @action(detail=True, methods=['post'])
+    @action(
+        detail=True, methods=['post'], permission_classes=[AddIfNotParent, permissions.IsAuthenticated],
+        throttle_classes=[UserRateThrottle]
+    )
     def add_comment(self, request, *args, **kwargs):
         """Добавление комментария"""
+
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             Comment.objects.create(**serializer.validated_data, user_id=request.user.pk,
@@ -154,6 +139,7 @@ class CommentRetrieveViewSets(viewsets.GenericViewSet, mixins.RetrieveModelMixin
 
 class BasketViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     """Корзина пользователя"""
+
     serializer_class = BasketSerializer
     queryset = Basket.objects.all()
     permission_classes = [IfBasketUser, permissions.IsAuthenticated]
@@ -166,4 +152,5 @@ class BasketViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
 def auth(request):
     """Авторизация через другие соц сети"""
+
     return render(request, 'auth.html')

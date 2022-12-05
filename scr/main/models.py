@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from rest_framework.reverse import reverse
 
 
 class AbstractModel(models.Model):
@@ -17,7 +18,9 @@ class AbstractModel(models.Model):
 
 
 class Category(AbstractModel):
-    pass
+
+    def get_absolute_url(self):
+        return reverse('category-detail', kwargs={'slug': self.slug})
 
 
 class Product(AbstractModel):
@@ -32,6 +35,9 @@ class Product(AbstractModel):
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
         ordering = ['-id']
+
+    def get_absolute_url(self):
+        return reverse('product-detail', kwargs={'slug': self.slug})
 
 
 class Comment(models.Model):
@@ -51,6 +57,9 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.id}--{self.user}: {self.product}'
 
+    def get_absolute_url(self):
+        return reverse('comment-detail', kwargs={'pk': self.id})
+
 
 class Basket(models.Model):
     product = models.ManyToManyField(Product, verbose_name='Корзина', related_name='bas_product', blank=True)
@@ -63,3 +72,7 @@ class Basket(models.Model):
 
     def __str__(self):
         return f'{self.id}--{self.user}'
+
+    @staticmethod
+    def get_absolute_url():
+        return reverse('basket-list')

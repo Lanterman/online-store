@@ -1,4 +1,8 @@
 .idea
 venv
 __pycache__
-migrations/
+
+scr/main/migrations/*
+!scr/main/migrations/__init__.py
+
+media

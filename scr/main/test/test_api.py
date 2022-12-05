@@ -6,7 +6,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase, APIRequestFactory,  APIClient
 
-from scr.main.models import *
 from scr.main.serializers import *
 
 
@@ -233,7 +232,7 @@ class CommentRetrieveViewSetsTestCase(APITestCase):
         response_1 = self.client.get(url_1)
         response_2 = self.client.get(url_2)
         serializer_data_1 = CommentDetailSerializer(self.comment_1, context={'request': request_1}).data
-        serializer_data_2 = CommentChildrenSerializer(self.comment_2, context={'request': request_2}).data
+        serializer_data_2 = CommentDetailSerializer(self.comment_2, context={'request': request_2}).data
         self.assertEqual(response_1.status_code, status.HTTP_200_OK)
         self.assertEqual(response_2.status_code, status.HTTP_200_OK)
         self.assertEqual(serializer_data_1, response_1.data)

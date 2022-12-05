@@ -1,3 +1,5 @@
+from abc import ABC
+
 from rest_framework import serializers
 
 from .models import *
@@ -39,10 +41,10 @@ class CommentChildrenSerializer(serializers.ModelSerializer):
         fields = ('url', 'description', 'user', 'date')
 
 
-class FilterCommentSerializer(serializers.ListSerializer):
+class FilterCommentSerializer(serializers.ListSerializer, ABC):
     """Фильтрация комментариев"""
     def to_representation(self, data):
-        data = data.filter(parent=None)
+        data = data.filter(parent=None).prefetch_related('children')
         return super().to_representation(data)
 
 

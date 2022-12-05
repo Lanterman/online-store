@@ -123,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Minsk'
 
@@ -155,14 +155,23 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '2/min'
+    },
+    # 'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': ('v1',),
+    'DATETIME_FORMAT': '%d.%m.%Y %H:%M:%S',
+    'DATETIME_INPUT_FORMATS': '%d.%m.%Y %H:%M:%S',
+    'COMPACT_JSON': False,
 }
 
-#smtp
+# smtp
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = '...@gmail.com'
-EMAIL_HOST_PASSWORD = '...'
+EMAIL_HOST = 'smtp.mail.com'
+EMAIL_HOST_USER = 'test.fastapi.mail@mail.ru'
+EMAIL_HOST_PASSWORD = '8UEhnAhHZdgdmzrbKwKq'
 EMAIL_PORT = 587
 
 DJOSER = {
@@ -206,4 +215,7 @@ SOCIAL_AUTH_VK_OAUTH2_SECRET = 'tzkKLa2UT3FZRPty488H'
 
 INTERNAL_IPS = [
     '127.0.0.1',
+    '0.0.0.0'
 ]
+
+LOGIN_REDIRECT_URL = "/shop/"
